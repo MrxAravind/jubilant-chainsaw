@@ -1,0 +1,2 @@
+pyrofork==2.2.11
+aria2p
