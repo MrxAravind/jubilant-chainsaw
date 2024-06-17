@@ -20,7 +20,7 @@ aria2 = aria2p.API(
 # Initialize the Telegram bot client
 api_id = 21409951
 api_hash = "5acdb5491989cb7e4527a3bd61fa112d"
-bot_token = "7426415079:AAFtW-nWeoUaicRKLbTTrR9mLjpaFcTbJfI"
+bot_token = "7031135933:AAELXo4tffYkvaxcWsXrmooETXQT777phSQ"
 app = Client("Spidy", api_id, api_hash, bot_token=bot_token)
 
 # Dictionary to store progress information
