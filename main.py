@@ -23,6 +23,8 @@ api_hash = "5acdb5491989cb7e4527a3bd61fa112d"
 bot_token = "7031135933:AAELXo4tffYkvaxcWsXrmooETXQT777phSQ"
 app = Client("Spidy", api_id, api_hash, bot_token=bot_token)
 
+up = {}
+
 
 def add_download(api, uri):
     download = api.add_uris([uri])
@@ -111,11 +113,9 @@ async def terabox(client, message):
                     vstatus = get_status(aria2, video.gid)
                     tstatus = get_status(aria2, thumb.gid)
                     status_text = "\n".join([f"{i} : {vstatus[i]}" for i in vstatus])
-                    print(status_text)
                     if progress_bar == 0:
-                          pass
-                          #pmsg = await app.send_message(chat_id=message.chat.id, text=status_text)
-                          #progress_bar = pmsg.id
+                          pmsg = await app.send_message(chat_id=message.chat.id, text=status_text)
+                          progress_bar = pmsg.id
                     else:
                         await app.edit_message_text(message.chat.id, progress_bar, status_text)
                     if vstatus['is_complete'] and tstatus['is_complete']:
