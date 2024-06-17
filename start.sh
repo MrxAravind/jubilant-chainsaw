@@ -1,3 +1,2 @@
-pip install -r requirements.txt
-apt update -y
-apt install aria2 -y
+sudo apt-get update
+sudo apt install aria2
