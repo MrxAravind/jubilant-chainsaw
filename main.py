@@ -64,7 +64,7 @@ async def progress(current, total, client, msg_id, file_name, chat_id):
     status_text = (f"Status : Uploading\nFile Name : {file_name}\nSpeed : {format_bytes(speed / time_difference)}/s\n"
                    f"Size : {format_bytes(total)}\nProgress : {current * 100 / total:.1f}%")
 
-    if time_difference > 5:
+    if time_difference > 3:
         up[file_name]['time'] = current_time
         await client.edit_message_text(chat_id, msg_id, status_text)
 
@@ -122,6 +122,7 @@ async def terabox(client, message):
                         print("Download complete!")
                         up[vstatus['file_name']] = {}
                         current_time = datetime.now()
+                        up[vstatus['file_name']]['current'] = 0
                         up[vstatus['file_name']]['time'] = current_time
                         await app.send_video(chat_id=message.chat.id, video=vstatus['file_name'], thumb=tstatus['file_name'],
                                              progress=progress, progress_args=(app, progress_bar, vstatus['file_name'], message.chat.id))
