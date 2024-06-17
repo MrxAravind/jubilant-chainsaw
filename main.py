@@ -23,11 +23,6 @@ api_hash = "5acdb5491989cb7e4527a3bd61fa112d"
 bot_token = "7031135933:AAELXo4tffYkvaxcWsXrmooETXQT777phSQ"
 app = Client("Spidy", api_id, api_hash, bot_token=bot_token)
 
-# Dictionary to store progress information
-up = {}
-
-#store all download 
-dlstatus = []
 
 def add_download(api, uri):
     download = api.add_uris([uri])
@@ -115,20 +110,17 @@ async def terabox(client, message):
                 while True:
                     vstatus = get_status(aria2, video.gid)
                     tstatus = get_status(aria2, thumb.gid)
-                    dlstatus.append({ 'gid': video.gid ,'tgid':thumb.gid,'status' : ["\n".join([f"{key.capitalize()}: {value}" for key, value in vstatus.items()]),'reply_id' : reply.id})
                     status_text = "\n\n".join([value for key,value in dlstatus.items if key == "status"])                    
-                    if progress_bar == 0 and len(dlstatus) < 2:
+                    if progress_bar == 0:
                         pmsg = await app.send_message(chat_id=message.chat.id, text=status_text)
                         progress_bar = pmsg.id
                     else:
                         await app.edit_message_text(message.chat.id, progress_bar, status_text)
                     if vstatus['is_complete'] and tstatus['is_complete']:
                         print("Download complete!")
-                        up[vstatus['file_name']] = {'time': datetime.now(), 'current': 0}
                         await app.send_video(chat_id=message.chat.id, video=vstatus['file_name'], thumb=tstatus['file_name'],
                                              progress=progress, progress_args=(app, progress_bar, vstatus['file_name'], message.chat.id))
-                        if dlstatus == 0:
-                            await pmsg.delete()
+                        
                         await reply.delete()
                         os.remove(vstatus['file_name'])
                         os.remove(tstatus['file_name'])
