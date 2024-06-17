@@ -122,7 +122,7 @@ async def terabox(client, message):
                         print("Download complete!")
                         up[file_name] = {}
                         current_time = datetime.now()
-                        up[file_name]['time'] = current_time
+                        up[vstatus['file_name']]['time'] = current_time
                         await app.send_video(chat_id=message.chat.id, video=vstatus['file_name'], thumb=tstatus['file_name'],
                                              progress=progress, progress_args=(app, progress_bar, vstatus['file_name'], message.chat.id))
                         
