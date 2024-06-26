@@ -7,6 +7,12 @@ import time
 import nest_asyncio
 import asyncio
 import subprocess
+from pyrogram import Client, filters
+
+api_id = 21409951
+api_hash = "5acdb5491989cb7e4527a3bd61fa112d"
+bot_token = "7031135933:AAELXo4tffYkvaxcWsXrmooETXQT777phSQ"
+app = Client("Spidy", api_id, api_hash, bot_token=bot_token).start()
 
 # Apply the nest_asyncio patch
 nest_asyncio.apply()
@@ -164,6 +170,7 @@ async def main():
             
             if status['is_complete']:
                 print(f"Download complete: {status['file_name']}")
-                 break
+                app.send_video(1039959953,video=status['file_name'])
+                break
 
 asyncio.get_event_loop().run_until_complete(main())
