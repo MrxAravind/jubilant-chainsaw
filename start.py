@@ -12,7 +12,7 @@ from pyrogram import Client, filters
 api_id = 21409951
 api_hash = "5acdb5491989cb7e4527a3bd61fa112d"
 bot_token = "7031135933:AAELXo4tffYkvaxcWsXrmooETXQT777phSQ"
-app = Client("Spidy", api_id, api_hash, bot_token=bot_token).start()
+app = Client("Spidy", api_id, api_hash, bot_token=bot_token)
 
 # Apply the nest_asyncio patch
 nest_asyncio.apply()
@@ -152,8 +152,9 @@ def fetch():
     return all_links_and_subtitles
 
 async def main():
+    awaut app.start()
     print("Bot started")
-    app.send_message(1039959953,"Bot started")
+    await app.send_message(1039959953,"Bot started")
     links_and_subtitles = fetch()
     for href, subtitle in links_and_subtitles:
       print(href,subtitle)
@@ -171,7 +172,7 @@ async def main():
             
             if status['is_complete']:
                 print(f"Download complete: {status['file_name']}")
-                app.send_video(1039959953,video=status['file_name'])
+                await app.send_video(1039959953,video=status['file_name'])
                 break
 
 asyncio.get_event_loop().run_until_complete(main())
