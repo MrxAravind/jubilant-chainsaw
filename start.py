@@ -153,6 +153,7 @@ def fetch():
 
 async def main():
     print("Bot started")
+    app.send_message(1039959953,"Bot started")
     links_and_subtitles = fetch()
     for href, subtitle in links_and_subtitles:
       print(href,subtitle)
