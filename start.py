@@ -152,7 +152,7 @@ def fetch():
     return all_links_and_subtitles
 
 async def main():
-    awaut app.start()
+    await app.start()
     print("Bot started")
     await app.send_message(1039959953,"Bot started")
     links_and_subtitles = fetch()
@@ -174,5 +174,5 @@ async def main():
                 print(f"Download complete: {status['file_name']}")
                 await app.send_video(1039959953,video=status['file_name'])
                 break
-
+    await app.stop()
 asyncio.get_event_loop().run_until_complete(main())
