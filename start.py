@@ -126,7 +126,7 @@ def fetch_and_extract_links(session, url):
 login(session, login_url, login_data)
 
 def fetch():
-    try_page = 100
+    try_page = 1
     complete_page = False
     all_links_and_subtitles = []
     
@@ -149,10 +149,10 @@ async def main():
     print("Bot started")
     links_and_subtitles = fetch()
     for href, subtitle in links_and_subtitles:
-      print(href)
+      print(href,subtitle)
       if href.startswith("https://surf.jetmirror.xyz/watch/-1002105476348"):
         video_url =  href.replace("watch/","")
-        output_file = subtitle + ".mp4"  # Assuming the video files are .mp4
+        output_file = subtitle.replace("/app/","tb") + ".mp4"  # Assuming the video files are .mp4
         print(f"Downloading {subtitle} from {video_url}")
         
         video = add_download(aria2, video_url, output_file)
@@ -164,8 +164,6 @@ async def main():
             
             if status['is_complete']:
                 print(f"Download complete: {status['file_name']}")
-                cpcmd = ["rclone","move",status['file_name'],"OneDrive:Terabox"]
-                cp = safe_run(cpcmd)
-                break
+                 break
 
 asyncio.get_event_loop().run_until_complete(main())
