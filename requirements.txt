@@ -2,3 +2,4 @@ pyrofork==2.2.11
 TgCrypto
 aria2
 aria2p
+bs4
