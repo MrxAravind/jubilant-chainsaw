@@ -4,3 +4,4 @@ aria2
 aria2p
 bs4
 nest_asyncio
+speedtest-cli
