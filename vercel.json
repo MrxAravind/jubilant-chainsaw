@@ -6,7 +6,7 @@
 
         {
 
-            "src": "./index.py",
+            "src": "./main.py",
 
             "use": "@vercel/python"
 
