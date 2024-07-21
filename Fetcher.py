@@ -11,7 +11,12 @@ from swibots import BotApp
 TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAyMDUsImlzX2JvdCI6dHJ1ZSwiYWN0aXZlIjp0cnVlLCJpYXQiOjE3MTM2MTQxOTgsImV4cCI6MjM0NDc2NjE5OH0.-SHFOkXWreqsjTjcM5V7GLaTZwfW62DGlzeGoYuQSnY"
 bot = BotApp(TOKEN)
 
-
+mongodb_uri = "mongodb+srv://spidy:hatelenovo33@cluster0.okliowd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+database_name = "Spidydb"
+db = connect_to_mongodb(mongodb_uri, database_name)
+collection_name = "videos"
+                 
+        
 
 
 async def upload_progress_handler(progress):
@@ -111,7 +116,7 @@ def fetch():
         scrape_url = base_scrape_url.format(try_page)
         links_and_subtitles = fetch_and_extract_links(session, scrape_url)
         
-        if len(links_and_subtitles) == 0 or try_page == 10:
+        if len(links_and_subtitles) == 0:
             complete_page = True
             break
         
@@ -123,9 +128,15 @@ def fetch():
     return all_links_and_subtitles
 
 async def main():
+    if db:
+       documents = find_documents(db, collection_name)
+       if documents:
+         print("Documents retrieved from MongoDB:")
+         link_ids = [ doc["ID"] for doc in documents]
+                
     links_and_subtitles = fetch()
     for href, subtitle in links_and_subtitles:
-      if href.startswith("https://surf.jetmirror.xyz/watch/-1002105476348"):
+      if href.startswith("https://surf.jetmirror.xyz/watch/-1002105476348") and not href.startswith(link_ids):
               video_url =  href.replace("watch/","")
               downloader = TechZDL(
                               url=video_url,
@@ -139,6 +150,12 @@ async def main():
               if downloader.download_success:
                   print("Download Successful...")
                   print("Starting To Upload..")
-                  await switch_upload(file_info['filename'],)
+                  response = await switch_upload(file_info['filename'],)
+                  result = {"ID":video_url.split("&")[0],"File_Name":file_info['filename'],"Media_Link":response.media_link}
+                  if db:
+                     insert_document(db, collection_name, result)
+              
   
 asyncio.run(main())
+db.client.close()
+        
