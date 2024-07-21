@@ -30,20 +30,3 @@ def find_documents(db, collection_name, query=None):
     except Exception as e:
         print(f"Error: Could not retrieve documents.\n{e}")
         return []
-
-if __name__ == "__main__":
-  mongodb_uri = "mongodb://localhost:27017/"
-    database_name = "terabox"
-
-    db = connect_to_mongodb(mongodb_uri, database_name)
-
-    if db:
-        collection_name = "videos"
-        insert_document(db, collection_name, document)
-        documents = find_documents(db, collection_name)
-        if documents:
-            print("Documents retrieved from MongoDB:")
-            for doc in documents:
-                print(doc)
-
-        db.client.close()
