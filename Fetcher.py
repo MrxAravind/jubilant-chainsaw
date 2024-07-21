@@ -129,7 +129,7 @@ def fetch():
     return all_links_and_subtitles
 
 async def main():
-    if db:
+    if True:
        documents = find_documents(db, collection_name)
        if documents:
          print("Documents retrieved from MongoDB:")
@@ -154,7 +154,7 @@ async def main():
                   response = await switch_upload(file_info['filename'],)
                   result = {"ID":video_url.split("&")[0],"File_Name":file_info['filename'],"Media_Link":response.media_link}
                   print(result)
-                  if db:
+                  if True:
                      insert_document(db, collection_name, result)
                      print("Updated to Database!!")
     db.client.close()
