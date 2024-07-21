@@ -52,8 +52,8 @@ base_scrape_url = 'https://surf.jetmirror.xyz/channel/-1002105476348?page={}'
 session = requests.Session()
 
 
-def progress_callback(description, done, total, arg1, arg2):
-    print(f"{description}: {done}/{total} bytes downloaded", arg1, arg2)
+def progress_callback(description, done, total):
+    print(f"{description}: {done}/{total} bytes downloaded")
 
 
 def login(session, login_url, login_data):
