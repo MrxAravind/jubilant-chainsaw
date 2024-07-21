@@ -1,7 +1,2 @@
-pyrofork==2.2.11
-TgCrypto
-aria2
-aria2p
-bs4
-nest_asyncio
-speedtest-cli
+techzdl
+swibots
