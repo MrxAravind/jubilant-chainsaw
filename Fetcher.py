@@ -117,7 +117,7 @@ def fetch():
         scrape_url = base_scrape_url.format(try_page)
         links_and_subtitles = fetch_and_extract_links(session, scrape_url)
         
-        if len(links_and_subtitles) == 0 or try_page == 10 :
+        if len(links_and_subtitles) == 0 :
             complete_page = True
             break
         
@@ -157,7 +157,6 @@ async def main():
                   if True:
                      insert_document(db, collection_name, result)
                      print("Updated to Database!!")
+                  os.remove(file_info['filename'])
     db.client.close()
-
-  
 asyncio.run(main())
