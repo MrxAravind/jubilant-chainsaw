@@ -33,19 +33,13 @@ def find_documents(db, collection_name, query=None):
 
 if __name__ == "__main__":
   mongodb_uri = "mongodb://localhost:27017/"
-    database_name = "your_database_name"
+    database_name = "terabox"
 
     db = connect_to_mongodb(mongodb_uri, database_name)
 
     if db:
-        document_to_insert = {
-            "name": "John Doe",
-            "email": "john.doe@example.com",
-            "age": 30
-        }
-
-        collection_name = "users"
-        insert_document(db, collection_name, document_to_insert)
+        collection_name = "videos"
+        insert_document(db, collection_name, document)
         documents = find_documents(db, collection_name)
         if documents:
             print("Documents retrieved from MongoDB:")
