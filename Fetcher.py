@@ -18,7 +18,7 @@ async def upload_progress_handler(progress):
     print(f"Upload progress: {format_bytes(progress.readed+progress.current)}")
 
 
-async def switch_upload(file,thumb):
+async def switch_upload(file):
     res = await bot.send_media(
         message=f"{os.path.basename(file)}",
         community_id="10fccf16-fe33-4139-8554-c493abd33a42",
@@ -37,6 +37,13 @@ def safe_run(cmd):
         raise subprocess.CalledProcessError(result.returncode, cmd, output=result.stdout, stderr=result.stderr)
     return result
 
+def format_bytes(byte_count):
+    suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    index = 0
+    while byte_count >= 1024 and index < len(suffixes) - 1:
+        byte_count /= 1024
+        index += 1
+    return f"{byte_count:.2f} {suffixes[index]}"
 
 login_url = 'https://surf.jetmirror.xyz/login'
 username = 'jet'
@@ -53,7 +60,7 @@ session = requests.Session()
 
 
 def progress_callback(description, done, total):
-    print(f"{description}: {done}/{total} bytes downloaded")
+    print(f"{description}: {format_bytes(done)}/{format_bytes(total)} MB downloaded")
 
 
 def login(session, login_url, login_data):
