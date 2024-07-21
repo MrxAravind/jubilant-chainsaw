@@ -153,8 +153,10 @@ async def main():
                   print("Starting To Upload..")
                   response = await switch_upload(file_info['filename'],)
                   result = {"ID":video_url.split("&")[0],"File_Name":file_info['filename'],"Media_Link":response.media_link}
+                  print(result)
                   if db:
                      insert_document(db, collection_name, result)
+                     print("Updated to Database!!")
               
   
 asyncio.run(main())
