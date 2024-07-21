@@ -19,6 +19,7 @@ async def upload_progress_handler(progress):
 
 
 async def switch_upload(file):
+    file = f"/download/{file}"
     res = await bot.send_media(
         message=f"{os.path.basename(file)}",
         community_id="10fccf16-fe33-4139-8554-c493abd33a42",
