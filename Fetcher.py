@@ -117,7 +117,7 @@ def fetch():
         scrape_url = base_scrape_url.format(try_page)
         links_and_subtitles = fetch_and_extract_links(session, scrape_url)
         
-        if len(links_and_subtitles) == 0:
+        if len(links_and_subtitles) == 0 or try_page == 10 :
             complete_page = True
             break
         
