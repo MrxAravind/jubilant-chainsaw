@@ -7,6 +7,7 @@ import asyncio
 import subprocess
 from techzdl import TechZDL
 from swibots import BotApp
+from database import *
 
 TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAyMDUsImlzX2JvdCI6dHJ1ZSwiYWN0aXZlIjp0cnVlLCJpYXQiOjE3MTM2MTQxOTgsImV4cCI6MjM0NDc2NjE5OH0.-SHFOkXWreqsjTjcM5V7GLaTZwfW62DGlzeGoYuQSnY"
 bot = BotApp(TOKEN)
