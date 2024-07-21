@@ -157,8 +157,7 @@ async def main():
                   if db:
                      insert_document(db, collection_name, result)
                      print("Updated to Database!!")
-              
+    db.client.close()
+
   
 asyncio.run(main())
-db.client.close()
-        
