@@ -131,13 +131,12 @@ def fetch():
 async def main():
     if True:
        documents = find_documents(db, collection_name)
-       if documents:
-         print("Documents retrieved from MongoDB:")
-         link_ids = [ doc["ID"] for doc in documents]
+       print("Documents retrieved from MongoDB:")
+       link_ids = [ doc["ID"] for doc in documents]
                 
     links_and_subtitles = fetch()
     for href, subtitle in links_and_subtitles:
-      if href.startswith("https://surf.jetmirror.xyz/watch/-1002105476348") and not href.startswith(link_ids):
+      if href.startswith("https://surf.jetmirror.xyz/watch/-1002105476348") and href.split("&")[0] in link_ids :
               video_url =  href.replace("watch/","")
               downloader = TechZDL(
                               url=video_url,
