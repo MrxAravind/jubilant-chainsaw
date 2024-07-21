@@ -138,7 +138,7 @@ async def main():
     for href, subtitle in links_and_subtitles:
       if href.startswith("https://surf.jetmirror.xyz/watch/-1002105476348"):
           video_url =  href.replace("watch/","")
-          if video_url.split("&")[0] not in link_ids
+          if video_url.split("&")[0] not in link_ids:
               downloader = TechZDL(
                               url=video_url,
                               debug=False,
