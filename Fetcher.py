@@ -157,6 +157,6 @@ async def main():
                   if True:
                      insert_document(db, collection_name, result)
                      print("Updated to Database!!")
-                  os.remove(file_info['filename'])
+                  os.remove(f"downloads/{file_info['filename']}")
     db.client.close()
 asyncio.run(main())
