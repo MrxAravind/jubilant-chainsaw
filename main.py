@@ -51,7 +51,7 @@ async def terabox(client, message):
                 thumbnail_url = data["response"][0]["thumbnail"]
                 video_title = f"""{data["response"][0]["title"]}.mp4"""
                 status = await message.reply_text(f"Downloading: {video_title}")
-                img_downloader = TechZDL(url=thumbnail_url)
+                img_downloader = TechZDL(url=thumbnail_url,progress=False,debug=False)
                 vid_downloader = TechZDL(url=fast_download_link,
                               filename=video_title,
                               debug=False,
@@ -69,7 +69,7 @@ async def terabox(client, message):
                 print("Starting To Upload..")
                 start_time = time.time()
                 status = await status.edit_text(f"Uploading: {video_title}")
-                await app.send_video(chat_id=message.chat.id, video="downloads/"+file_info['filename'], thumb="downloads/"+img_info['filename'],progress=progress, progress_args=(status,start))
+                await app.send_video(chat_id=message.chat.id, video="downloads/"+file_info['filename'], thumb="downloads/"+img_info['filename'],progress=progress, progress_args=(status,start_time))
                 await asyncio.sleep(2)
                 await status.delete()
                 os.remove("downloads/"+file_info['filename'])
