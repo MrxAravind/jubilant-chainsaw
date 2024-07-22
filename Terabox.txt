@@ -1,2 +1,3 @@
 aria2
 aria2p
+pyrofork==2.2.11
