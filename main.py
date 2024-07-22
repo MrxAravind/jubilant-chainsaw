@@ -57,6 +57,7 @@ async def terabox(client, message):
                               debug=False,
                               progress=False,
                               single_threaded=True,
+                              workers=1,
                               progress_callback=progress_callback,
                               progress_args=(status,),
                               progress_interval=3,)
