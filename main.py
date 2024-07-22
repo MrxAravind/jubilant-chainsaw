@@ -64,11 +64,14 @@ async def terabox(client, message):
                 await vid_downloader.start()
                 img_info = await img_downloader.get_file_info()     
                 file_info = await vid_downloader.get_file_info()
+                while vid_downloader.is_running:
+                       await asyncio.sleep(1)
                 print("Starting To Upload..")
                 start_time = time.time()
-                status = await pmsg.edit_text(message.chat.id, f"Uploading: {video_title}")
-                await app.send_video(chat_id=message.chat.id, video="downloads/"+file_info['filename'], thumb="downloads/"+img_info['filename'],progress=progress, progress_args=(status,))
-                await reply.delete()
+                status = await status.edit_text(f"Uploading: {video_title}")
+                await app.send_video(chat_id=message.chat.id, video="downloads/"+file_info['filename'], thumb="downloads/"+img_info['filename'],progress=progress, progress_args=(status,start))
+                await asyncio.sleep(2)
+                await status.delete()
                 os.remove("downloads/"+file_info['filename'])
                 os.remove("downloads/"+img_info['filename'])
 
