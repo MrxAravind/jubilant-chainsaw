@@ -14,15 +14,6 @@ app = Client("Spidy", api_id, api_hash, bot_token=bot_token)
 up = {}
 
 
-
-async def progress(current, total,status,start):
-     current_time = time.time()
-     diff = current_time - start
-     if round(diff % 5.00) == 0 or current == total:
-         per = f"{current * 100 / total:.1f}%"
-         start_time = current_time
-         await status.edit_text(f"{status.text}\nStatus:Uploading\nProgress:{format_bytes(current)} / {format_bytes(total)} [{per}]")
-        
 def format_bytes(byte_count):
     suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
     index = 0
@@ -31,8 +22,18 @@ def format_bytes(byte_count):
         index += 1
     return f"{byte_count:.2f} {suffixes[index]}"
 
-async def progress_callback(description, done, total,status,uploadedeps):
-    await status.edit_text(f"{status.text}\nDownloaded Eps:{uploadedeps}\nStatus:Downloading\nDLProgress:{format_bytes(done)} / {format_bytes(total)}")
+
+async def progress(current, total,status,start):
+     current_time = time.time()
+     diff = current_time - start
+     if round(diff % 7.00) == 0 or current == total:
+         per = f"{current * 100 / total:.1f}%"
+         start_time = current_time
+         await status.edit_text(f"{status.text}\nStatus:Uploading\nProgress:{format_bytes(current)} / {format_bytes(total)} [{per}]")
+        
+async def progress_callback(description, done,total,status):
+    per = f"{done * 100 / total:.1f}%"
+    await status.edit_text(f"{status.text}\nStatus:Downloading\nProgress:{format_bytes(done)} / {format_bytes(total)} [{per}]")
     
 
 @app.on_message(filters.private & filters.text)
@@ -55,6 +56,7 @@ async def terabox(client, message):
                               filename=video_title,
                               debug=False,
                               progress=False,
+                              single_threaded=True,
                               progress_callback=progress_callback,
                               progress_args=(status,),
                               progress_interval=3,)
