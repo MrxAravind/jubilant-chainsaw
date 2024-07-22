@@ -54,10 +54,10 @@ async def terabox(client, message):
                 img_downloader = TechZDL(url=thumbnail_url,progress=False,debug=False)
                 vid_downloader = TechZDL(url=fast_download_link,
                               filename=video_title,
-                              debug=False,
-                              progress=False,
                               single_threaded=True,
                               workers=1,
+                              debug=False,
+                              progress=False,
                               progress_callback=progress_callback,
                               progress_args=(status,),
                               progress_interval=3,)
