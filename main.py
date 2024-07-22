@@ -48,7 +48,7 @@ async def terabox(client, message):
                 fast_download_link = resolutions["Fast Download"]
                 hd_video_link = resolutions["HD Video"]
                 thumbnail_url = data["response"][0]["thumbnail"]
-                video_title = f"{data["response"][0]["title"]}.mp4"
+                video_title = f"""{data["response"][0]["title"]}.mp4"""
                 status = await message.reply_text(f"Downloading: {video_title}")
                 img_downloader = TechZDL(url=thumbnail_url)
                 vid_downloader = TechZDL(url=fast_download_link,
