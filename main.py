@@ -5,7 +5,6 @@ import os
 from pyrogram import Client, filters
 from datetime import datetime
 
-os.system("pip install -r requirements.txt")
 
 # Start aria2c in the background
 os.system("nohup aria2c --enable-rpc --rpc-listen-all=true --rpc-allow-origin-all > aria2c.log 2>&1 &")
