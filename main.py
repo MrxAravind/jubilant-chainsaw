@@ -148,6 +148,7 @@ async def terabox(client, message):
                 status = await status.edit_text(f"Downloading {video_title}")
                 while not video.is_complete:
                     video.update()
+                    print(video)
                     percentage = video.progress
                     done = video.completed_length
                     total_size = video.total_length
@@ -165,8 +166,8 @@ async def terabox(client, message):
                           elapsed=elapsed_time_seconds,
                           aria2p_gid=video.gid
                              )
-                    
-                    status = await status.edit_text(text=progress_text)
+                    if status.text != progress_text:
+                         status = await status.edit_text(text=progress_text)
                     await asyncio.sleep(2)
                     
                     if video.is_complete:
