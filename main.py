@@ -147,11 +147,11 @@ async def terabox(client, message):
                 status = await status.edit_text(f"Downloading {video_title}")
                 while not video.is_complete:
                     video.update()
-                    percentage = download.progress
-                    done = download.completed_length
-                    total_size = download.total_length
-                    speed = download.download_speed
-                    eta = download.eta
+                    percentage = video.progress
+                    done = video.completed_length
+                    total_size = video.total_length
+                    speed = video.download_speed
+                    eta = video.eta
                     elapsed_time_seconds = (datetime.now() - start_time).total_seconds()
                     progress_text = format_progress_bar(
                           filename=video_title,
