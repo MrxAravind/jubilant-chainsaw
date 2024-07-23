@@ -67,7 +67,7 @@ async def progress(current, total, client, msg_id, file_name, chat_id):
 
     if time_difference > 3:
         up[file_name]['time'] = current_time
-        await client.edit_message_text(chat_id, msg_id, status_text)
+        await status.edit_text(status_text)
 
 def remove_download(api, gid):
     try:
@@ -99,6 +99,7 @@ async def terabox(client, message):
         query = message.text
         url = f"https://teraboxvideodownloader.nepcoderdevs.workers.dev/?url={query}"
         try:
+            status = await message.reply_text(f"Processing Link")
             response = requests.get(url)
             if response.status_code == 200:
                 data = response.json()
@@ -107,30 +108,23 @@ async def terabox(client, message):
                 hd_video_link = resolutions["HD Video"]
                 thumbnail_url = data["response"][0]["thumbnail"]
                 video_title = data["response"][0]["title"]
-                reply = await message.reply_text(f"Downloading: {video_title}")
                 video, thumb = add_both(fast_download_link, thumbnail_url)
-                progress_bar = 0
                 retry_error = 1
+                status = await status.edit_text(f"Downloading {video_title}")
                 while True:
                     vstatus = get_status(aria2, video.gid)
                     tstatus = get_status(aria2, thumb.gid)
                     print(vstatus)
                     status_text = "\n".join([f"{i} : {vstatus[i]}" for i in vstatus])
-                    if progress_bar == 0:
-                          pmsg = await app.send_message(chat_id=message.chat.id, text=status_text)
-                          progress_bar = pmsg.id
-                    else:
-                        await app.edit_message_text(message.chat.id, progress_bar, status_text)
-                    if vstatus['is_complete'] and tstatus['is_complete']:
+                    status = await status.edit_text(text=status_text)
+                    if 'is_complete' in vstatus and vstatus['is_complete'] and tstatus['is_complete']:
                         print("Download complete!")
                         up[vstatus['file_name']] = {}
                         current_time = datetime.now()
                         up[vstatus['file_name']]['current'] = 0
                         up[vstatus['file_name']]['time'] = current_time
-                        await app.send_video(chat_id=message.chat.id, video=vstatus['file_name'], thumb=tstatus['file_name'],
-                                             progress=progress, progress_args=(app, progress_bar, vstatus['file_name'], message.chat.id))
-                        
-                        await reply.delete()
+                        await app.send_video(chat_id=message.chat.id, video=vstatus['file_name'], thumb=tstatus['file_name'],progress=progress, progress_args=(status,vstatus['file_name']))
+                        await status.delete()
                         os.remove(vstatus['file_name'])
                         os.remove(tstatus['file_name'])
                         break
@@ -139,6 +133,7 @@ async def terabox(client, message):
                         print(f"Error detected, restarting downloads, Try {retry_error}...")
                         remove_download(aria2, video.gid)
                         remove_download(aria2, thumb.gid)
+                        time.sleep(2)
                         video, thumb = add_both(fast_download_link, thumbnail_url)
                     if retry_error > 3:
                         er = await app.edit_message_text(message.chat.id, progress_bar, "Failed To Fetch the Link")
