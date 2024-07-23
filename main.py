@@ -73,7 +73,7 @@ async def progress(current, total, status, filename, start,timer):
                 elapsed=elapsed_time_seconds,
                 aria2p_gid=""
             )
-      await status.edit_text(progress_text)
+        await status.edit_text(progress_text)
 
 def remove_download(api, gid):
     try:
