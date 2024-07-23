@@ -142,7 +142,8 @@ async def terabox(client, message):
                 hd_video_link = resolutions["HD Video"]
                 thumbnail_url = data["response"][0]["thumbnail"]
                 video_title = data["response"][0]["title"]
-                video = add_download(aria2, fast_download_link)
+                download = add_download(aria2, fast_download_link)
+                video  = api.get_download(download.gid)
                 start_time = datetime.now()
                 retry_error = 1
                 status = await status.edit_text(f"Downloading {video_title}")
