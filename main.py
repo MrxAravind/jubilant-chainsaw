@@ -55,19 +55,25 @@ def get_status(api, gid):
         print(f"Failed to get status for GID {gid}: {e}")
         raise
 
-async def progress(current, total, client, msg_id, file_name, chat_id):
-    past_time = up[file_name]['time']
-    current_time = datetime.now()
-    time_difference = (current_time - past_time).total_seconds()
-    speed = current - up[file_name]['current']
-    up[file_name]['current'] = current
-
-    status_text = (f"Status : Uploading\nFile Name : {file_name}\nSpeed : {format_bytes(speed / time_difference)}/s\n"
-                   f"Size : {format_bytes(total)}\nProgress : {current * 100 / total:.1f}%")
-
-    if time_difference > 3:
-        up[file_name]['time'] = current_time
-        await status.edit_text(status_text)
+async def progress(current, total, status, filename, start,timer):
+    current_time = time.time()
+    diff = current_time - start
+    if round(diff % 5.00) == 0 or current == total:
+        uploaded = current
+        percentage = (current / total) * 100
+        elapsed_time_seconds = (datetime.now() - timer).total_seconds()
+        progress_text = format_progress_bar(
+                filename=filename,
+                percentage=percentage,
+                done=current,
+                total_size=total,
+                status="Uploading",
+                eta=(total - current) / (current / elapsed_time_seconds) if current > 0 else 0,
+                speed=current / elapsed_time_seconds if current > 0 else 0,
+                elapsed=elapsed_time_seconds,
+                aria2p_gid=""
+            )
+      await status.edit_text(progress_text)
 
 def remove_download(api, gid):
     try:
@@ -77,12 +83,6 @@ def remove_download(api, gid):
         print(f"Failed to remove download: {e}")
         raise
 
-def add_both(vid, thumb):
-    video = add_download(aria2, vid)
-    thumbnail = add_download(aria2, thumb)
-    print("Added Download:", video.gid)
-    print("Added Download:", thumbnail.gid)
-    return video, thumbnail
 
 def format_bytes(byte_count):
     suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
@@ -92,6 +92,40 @@ def format_bytes(byte_count):
         index += 1
     return f"{byte_count:.2f} {suffixes[index]}"
 
+
+def format_progress_bar(filename, percentage, done, total_size, status, eta, speed, elapsed, aria2p_gid):
+    bar_length = 10
+    filled_length = int(bar_length * percentage / 100)
+    bar = '★' * filled_length + '☆' * (bar_length - filled_length)
+    def format_size(size):
+        size = int(size)
+        if size < 1024:
+            return f"{size} B"
+        elif size < 1024 ** 2:
+            return f"{size / 1024:.2f} KB"
+        elif size < 1024 ** 3:
+            return f"{size / 1024 ** 2:.2f} MB"
+        else:
+            return f"{size / 1024 ** 3:.2f} GB"
+    
+    def format_time(seconds):
+        seconds = int(seconds)
+        if seconds < 60:
+            return f"{seconds} sec"
+        elif seconds < 3600:
+            return f"{seconds // 60} min"
+        else:
+            hours = seconds // 3600
+            minutes = (seconds % 3600) // 60
+            return f"{hours} hr {minutes} min"
+    
+    return (
+        f"┏ ғɪʟᴇɴᴀᴍᴇ: {filename}\n"
+        f"┠ [{bar}] {percentage:.2f}%\n"
+        f"┠ ᴘʀᴏᴄᴇssᴇᴅ: {format_size(done)} ᴏғ {format_size(total_size)}\n"
+        f"┠ sᴛᴀᴛᴜs: {status}\n"
+        f"┠ sᴘᴇᴇᴅ: {format_size(speed)}/s"
+        )
 
 @app.on_message(filters.private & filters.text)
 async def terabox(client, message):
@@ -108,44 +142,57 @@ async def terabox(client, message):
                 hd_video_link = resolutions["HD Video"]
                 thumbnail_url = data["response"][0]["thumbnail"]
                 video_title = data["response"][0]["title"]
-                video, thumb = add_both(fast_download_link, thumbnail_url)
+                video = add_download(aria2, fast_download_link)
                 retry_error = 1
                 status = await status.edit_text(f"Downloading {video_title}")
-                while True:
-                    vstatus = get_status(aria2, video.gid)
-                    tstatus = get_status(aria2, thumb.gid)
-                    print(vstatus)
-                    status_text = "\n".join([f"{i} : {vstatus[i]}" for i in vstatus])
-                    status = await status.edit_text(text=status_text)
-                    if 'is_complete' in vstatus and vstatus['is_complete'] and tstatus['is_complete']:
+                while not video.is_complete:
+                    video.update()
+                    percentage = download.progress
+                    done = download.completed_length
+                    total_size = download.total_length
+                    speed = download.download_speed
+                    eta = download.eta
+                    elapsed_time_seconds = (datetime.now() - start_time).total_seconds()
+                    progress_text = format_progress_bar(
+                          filename=video_title,
+                          percentage=percentage,
+                          done=done,
+                          total_size=total_size,
+                          status="Downloading",
+                          eta=eta,
+                          speed=speed,
+                          elapsed=elapsed_time_seconds,
+                          aria2p_gid=video.gid
+                             )
+                    
+                    status = await status.edit_text(text=progress_text)
+                    await asyncio.sleep(2)
+                    
+                    if video.is_complete:
+                        file_path = download.files[0].path
+
+                        thumbnail_path = "thumbnail.jpg"
+                        thumbnail_response = requests.get(thumbnail_url)
+                        with open(thumbnail_path, "wb") as thumb_file:
+                             thumb_file.write(thumbnail_response.content)
+
+                        
                         print("Download complete!")
-                        up[vstatus['file_name']] = {}
-                        current_time = datetime.now()
-                        up[vstatus['file_name']]['current'] = 0
-                        up[vstatus['file_name']]['time'] = current_time
-                        await app.send_video(chat_id=message.chat.id, video=vstatus['file_name'], thumb=tstatus['file_name'],progress=progress, progress_args=(status,vstatus['file_name']))
+                        start_time = time.time()
+                        start_time2 = datetime.now()
+                        with open(file_path, 'rb') as file:
+                           await app.send_video(chat_id=message.chat.id, video=file, thumb=thumbnail_path,progress=progress, progress_args=(status,file_path,start_time,start_time2))
+                        await asyncio.sleep(1)
                         await status.delete()
-                        os.remove(vstatus['file_name'])
-                        os.remove(tstatus['file_name'])
-                        break
-                    elif "error" in vstatus["status"].lower() or "error" in tstatus["status"].lower():
-                        retry_error += 1
-                        print(f"Error detected, restarting downloads, Try {retry_error}...")
-                        remove_download(aria2, video.gid)
-                        remove_download(aria2, thumb.gid)
-                        time.sleep(2)
-                        video, thumb = add_both(fast_download_link, thumbnail_url)
-                    if retry_error > 3:
-                        er = await app.edit_message_text(message.chat.id, progress_bar, "Failed To Fetch the Link")
-                        time.sleep(3)
-                        await er.delete()
-                        await reply.delete()
+                        os.remove(file_path)
+                        os.remove(thumbnail_path)
                         break
                     time.sleep(2)
 
             else:
                 await app.send_message(chat_id=message.chat.id, text="Failed To Fetch the Link")
         except Exception as e:
+            print(e)
             await app.send_message(chat_id=message.chat.id, text=str(e))
     else:
         await app.send_message(chat_id=message.chat.id, text="Send a valid URL")
