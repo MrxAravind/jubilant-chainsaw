@@ -114,6 +114,7 @@ async def terabox(client, message):
                 while True:
                     vstatus = get_status(aria2, video.gid)
                     tstatus = get_status(aria2, thumb.gid)
+                    print(vstatus)
                     status_text = "\n".join([f"{i} : {vstatus[i]}" for i in vstatus])
                     if progress_bar == 0:
                           pmsg = await app.send_message(chat_id=message.chat.id, text=status_text)
